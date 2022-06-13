@@ -4,8 +4,8 @@ services:
         image: postgres
         restart: always
         environment:
-          - POSTGRES_USER=postgres
-          - POSTGRES_PASSWORD=postgres
+          - POSTGRES_USER=${POSTGRES_USER}
+          - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
         ports:
           - 5432:5432
         volumes: 
@@ -16,10 +16,10 @@ services:
         ports:
           - 8080:8080
         environment:
-          - PGUSER=postgres
-          - PGDATABASE=progettopa
-          - PGHOST=dbpa
-          - PGPASSWORD=postgres
-          - PGPORT=5432
+          - PGUSER=${PGUSER}
+          - PGDATABASE=${PGDATABASE}
+          - PGHOST=${PGHOST}
+          - PGPASSWORD=${PGPASSWORD}
+          - PGPORT=${PGPORT}
         depends_on:
           - dbpa

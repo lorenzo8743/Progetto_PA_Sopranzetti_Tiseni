@@ -2,9 +2,9 @@
   "name": "Progetto_PA_Sopranzetti_Tiseni",
   "version": "1.0.0",
   "description": "progetto di programmazione avanzata",
-  "main": "main.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon index.ts"
   },
   "dependencies": {
     "express": "^4.18.1",
@@ -12,7 +12,8 @@
     "sequelize": "^6.20.1",
     "sequelize-cli": "^6.4.1",
     "typescript": "^4.7.3",
-    "pg": "^8.7.3"
+    "pg": "^8.7.3",
+    "dotenv": "^16.0.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.16"
