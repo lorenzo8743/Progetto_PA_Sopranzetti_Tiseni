@@ -21,5 +21,8 @@ services:
           - PGHOST=${PGHOST}
           - PGPASSWORD=${PGPASSWORD}
           - PGPORT=${PGPORT}
+        volumes:
+          - .:/usr/src/app
+          - /usr/src/app/node_modules
         depends_on:
           - dbpa
