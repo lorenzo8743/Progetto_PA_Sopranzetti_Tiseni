@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('./database/connection.ts')
-let User = require('./userDAO')
+import { Document } from "./documentDAO"
+import { User } from "./userDAO"
 
 export const SignProcess = sequelize.define('ProcessiFirma', {
     codice_fiscale_firmatario: {
@@ -22,4 +23,8 @@ export const SignProcess = sequelize.define('ProcessiFirma', {
 SignProcess.belongsTo(User, {
     foreignKey: 'codice_fiscale_firmatario',
     targetKey: 'codice_fiscale'
+})
+SignProcess.belongsTo(Document, {
+    foreignKey: 'id_documento',
+    targetKey: 'id'
 })
