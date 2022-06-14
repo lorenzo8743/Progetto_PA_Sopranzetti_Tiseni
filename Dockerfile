@@ -2,4 +2,5 @@ FROM node:lts-stretch-slim
 WORKDIR /usr/src/app
 COPY . .
 RUN npm install
-CMD ["node", "index.ts"]
+RUN npm i -g nodemon
+CMD [ "nodemon", "-L", "index.js" ]
