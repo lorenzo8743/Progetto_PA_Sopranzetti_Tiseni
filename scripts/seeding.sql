@@ -15,8 +15,8 @@ CREATE TABLE utenti(
 );
 
 CREATE TABLE Documenti(
-    ID SERIAL PRIMARY KEY,
-    codice_fiscale_richiedente CHAR(16),
+    id SERIAL PRIMARY KEY,
+    codice_fiscale_richiedente CHAR(16) NOT NULL,
     uri_firmato VARCHAR(100),
     uri_non_firmato VARCHAR(100) NOT NULL,
     numero_firmatari INT NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE Documenti(
 
 CREATE TABLE ProcessiFirma(
     codice_fiscale_firmatario CHAR(16),
-    ID_documento INT,
+    id_documento INT,
     stato BOOL NOT NULL,
     PRIMARY KEY (codice_fiscale_firmatario,ID_documento),
     FOREIGN KEY (codice_fiscale_firmatario) REFERENCES utenti(codice_fiscale),
