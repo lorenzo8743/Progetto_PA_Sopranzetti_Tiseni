@@ -1,6 +1,15 @@
-FROM node:lts-stretch-slim
-WORKDIR /usr/src/app
-COPY . .
+FROM node:lts-stretch-slim as base
+
+WORKDIR /home/node/app
+
+COPY package.json ./
+
 RUN npm install
-RUN npm i -g nodemon
-CMD [ "nodemon", "-L", "index.js" ]
+
+COPY . .
+
+FROM base as production
+
+ENV NODE_PATH=./build
+
+RUN npm run build

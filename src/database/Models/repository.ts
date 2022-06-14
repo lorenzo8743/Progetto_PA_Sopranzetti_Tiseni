@@ -40,7 +40,7 @@ export class repository implements IRepositoy {
 
     async cancelSignProcess(document_id: number, codice_fiscale_richiedente: string) {
         // TODO: controllare se è l'utente richiedente con quel particolare codice fiscale è tra i firmatari del processo
-        await sequelize.transaction(async (t)=>{
+        await sequelize.transaction(async (t: any)=>{
             await Document.destroy({
                 where: {
                     id: document_id
@@ -63,7 +63,7 @@ export class repository implements IRepositoy {
             stato_firma: false,
             codice_fiscale_richiedente: codice_fiscale_richiedente
         })
-        .then(async (result)=>{
+        .then(async (result: any)=>{
             codici_fiscali_firmatari.forEach(element => {
                 let signProcess = {
                     codice_fiscale_firmatario: element,
@@ -76,7 +76,7 @@ export class repository implements IRepositoy {
                 signList
             })
         })
-        .catch((err)=>{})
+        .catch((err: any)=>{})
     }
 
     async getChallengingString(codice_fiscale: string, challengingNumbers: number[]): Promise<string[]> {

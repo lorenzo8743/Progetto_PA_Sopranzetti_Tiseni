@@ -12,17 +12,24 @@ services:
           # copy the sql script to create tables
           - ./scripts/seeding.sql:/docker-entrypoint-initdb.d/seeding.sql          
     web-node:
-        build: .
+        build:
+          context: .
+          dockerfile: Dockerfile
+          target: base
+        volumes:
+          - ./src:/home/node/app/src
+          - ./nodemon.json:/home/node/app/nodemon.json
+        container_name: applicazione_pa
+        expose:
+          - '8080'
         ports:
-          - 8080:8080
+          - '8080:8080'
         environment:
           - PGUSER=${PGUSER}
           - PGDATABASE=${PGDATABASE}
           - PGHOST=${PGHOST}
           - PGPASSWORD=${PGPASSWORD}
           - PGPORT=${PGPORT}
-        volumes:
-          - .:/usr/src/app
-          - /usr/src/app/node_modules
         depends_on:
           - dbpa
+        command: npm run dev
