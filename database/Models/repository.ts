@@ -1,16 +1,14 @@
-import { IRepositoy } from "./reposotoryInterface";
+import { IRepository } from "./reposotoryInterface";
 import { User } from "./DAOs/userDAO";
 import { Document } from "./DAOs/documentDAO";
 import { SignProcess } from "./DAOs/signProcessDAO";
-const sequelize = require("../connection")
+import { sequelize } from "../connection"
 
-//TODO: capire come gestire correttamente gli errori e cosa ritornare indietro al controller in caso di errori
-//TODO: aggiungere i tipi di ritorno in or per gestire meglio gli errori (da provare)
-
+// TODO: gestire eventuali errori
 /** 
  * Classe per la gestione del repository pattern per l'accesso al database
 */
-export class repository implements IRepositoy {
+export class repository implements IRepository {
 
     /**
      * Questa funzione restituisce un booleano che indica quale è lo stato del processo di firma
@@ -18,15 +16,15 @@ export class repository implements IRepositoy {
      * @param document_id 
      * @returns Promise<boolean>
      */
-    async getSignProcessStatus(document_id: number, codice_fiscale_richiedente: string): Promise<boolean|null>{
-        //TODO: completare il controllo sul codice fiscale del richiedente per vedere se può prendere lo stato del processo di firma
+    async getSignProcessStatus(document_id: number): Promise<boolean|null>{
         let document = await Document.findOne({
-            attributes: ['stato_firma'],
             where: {
                 id: document_id
-            }
+            },
+            include: [SignProcess]
         })
-        return document
+        return document.stato_firma
+
     }
 
     async consumeToken(codice_fiscale: string, token_number: number){
@@ -38,8 +36,7 @@ export class repository implements IRepositoy {
         })
     }
 
-    async cancelSignProcess(document_id: number, codice_fiscale_richiedente: string) {
-        // TODO: controllare se è l'utente richiedente con quel particolare codice fiscale è tra i firmatari del processo
+    async cancelSignProcess(document_id: number) {
         await sequelize.transaction(async (t)=>{
             await Document.destroy({
                 where: {
@@ -102,29 +99,13 @@ export class repository implements IRepositoy {
         return user.numero_token
     }
 
-    async getSignedDocument(codice_fiscale_richiedente: string, document_id: number): Promise<string>{
-        let firmatari: string[] = []
-
+    async getSignedDocument(document_id: number): Promise<string|null>{
         let document = await Document.findOne({
             where: {
                 id: document_id
             }
         })
-        if (document.codice_fiscale_richiedente !== null)
-            firmatari.push(document.codice_fiscale_richiedente)
-
-        let signers = await SignProcess.findAll({
-            where: {
-                id_documento: document_id
-            }
-        })
-        if (signers !== null)
-            firmatari.push(signers)
-        
-        if (codice_fiscale_richiedente in firmatari)
-            return document.uri_firmato
-        else
-            return ''
+        return document.uri_firmato
     }
 
     async makeSingleSign(document_URI: string, document_name: string, codice_fiscale_richiedente: number) {
@@ -135,6 +116,30 @@ export class repository implements IRepositoy {
             stato_firma: false,
             codice_fiscale_richiedente: codice_fiscale_richiedente
         })
+    }
+    async checkUserPermission(document_id: number, cf_user: string): Promise<boolean> {
+        let document = await  Document.findOne({
+            where: {
+                id: document_id
+            },
+            include: [{
+                model: SignProcess,
+                where: {
+                    codice_fiscale_firmatario: cf_user
+                }
+            }]
+        })
+        if (document === null){
+            return false
+        }
+        if (cf_user===document.codice_fiscale_richiedente || cf_user===document.include.SignProcess.codice_fiscale_firmatario)
+            return true
+
+        return false
+
+    }
+    async test() {
+        return await User.findAll()
     }
 }
 
