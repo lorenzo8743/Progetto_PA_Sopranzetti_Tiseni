@@ -14,10 +14,7 @@ services:
     web-node:
         build:
           context: .
-          dockerfile: Dockerfile
-        volumes:
-          - ./src:/home/node/app/src/:ro
-          - ./nodemon.json:/home/node/app/nodemon.json
+          dockerfile: Dockerfile-production
         container_name: applicazione_pa
         expose:
           - '8080'
@@ -31,4 +28,4 @@ services:
           - PGPORT=${PGPORT}
         depends_on:
           - dbpa
-        command: npm run dev
+        command: node build/index.js

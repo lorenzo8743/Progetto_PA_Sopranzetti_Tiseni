@@ -1,0 +1,15 @@
+FROM node:lts-stretch-slim
+
+WORKDIR /home/node/app
+
+COPY package.json ./
+
+RUN npm install
+
+COPY . .
+
+ENV NODE_PATH=./build
+
+RUN npm run build
+
+RUN rm -r src && rm tsconfig.json global.d.ts

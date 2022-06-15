@@ -1,8 +1,7 @@
-'use strict';
-require('dotenv').config();
-const express = require('express');
-const bodyParser = require('body-parser');
-const router = require('./route')
+import express from 'express';
+import bodyParser from 'body-parser';
+import config from './config';
+import router from "./route";
 
 // App
 const app = express();
@@ -18,5 +17,5 @@ app.use((req, res, next) => {
 
 app.use('/', router);
 
-app.listen(process.env.PORT, process.env.HOST);
-console.log(`Running on http://${process.env.HOST}:${process.env.PORT}`);
+app.listen(config.PORT);
+console.log(`Running on http://${config.HOST}:${config.PORT}`);

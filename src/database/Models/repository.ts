@@ -3,6 +3,7 @@ import { User } from "./DAOs/userDAO";
 import { Document } from "./DAOs/documentDAO";
 import { SignProcess } from "./DAOs/signProcessDAO";
 import { sequelize } from "../connection"
+import { Transaction } from "sequelize/types";
 
 // TODO: gestire eventuali errori
 /** 
@@ -37,7 +38,7 @@ export class repository implements IRepository {
     }
 
     async cancelSignProcess(document_id: number) {
-        await sequelize.transaction(async (t)=>{
+        await sequelize.transaction(async (t: Transaction)=>{
             await Document.destroy({
                 where: {
                     id: document_id
@@ -60,7 +61,7 @@ export class repository implements IRepository {
             stato_firma: false,
             codice_fiscale_richiedente: codice_fiscale_richiedente
         })
-        .then(async (result)=>{
+        .then(async (result: any)=>{
             codici_fiscali_firmatari.forEach(element => {
                 let signProcess = {
                     codice_fiscale_firmatario: element,
@@ -73,7 +74,7 @@ export class repository implements IRepository {
                 signList
             })
         })
-        .catch((err)=>{})
+        .catch((err: any)=>{})
     }
 
     async getChallengingString(codice_fiscale: string, challengingNumbers: number[]): Promise<string[]> {
