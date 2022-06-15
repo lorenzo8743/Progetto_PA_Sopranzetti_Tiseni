@@ -1,10 +1,11 @@
 import { SignProcess } from "./signProcessDAO"
 import { User } from "./userDAO"
-const { DataTypes } = require('sequelize')
-const sequelize = require('./database/connection.ts')
+import { DataTypes } from "sequelize";
+import { sequelize } from "../../connection"
 
+const seq = sequelize
 
-export const Document = sequelize.define('Documenti', {
+export const Document = seq.define('Documenti', {
     codice_fiscale_richiedente: {
         type: DataTypes.CHAR(16),
         allowNull: false
@@ -30,7 +31,7 @@ export const Document = sequelize.define('Documenti', {
         allowNull: false
     }
 },{
-    tablename: 'Documenti'
+    tableName: 'Documenti'
 })
 
 Document.belongsTo(User, {

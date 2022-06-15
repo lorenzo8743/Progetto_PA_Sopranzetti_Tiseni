@@ -1,7 +1,9 @@
-import Express from 'express';
+import { repository } from './database/Models/repository';
+import Express, { Request, Response } from 'express';
 const router = Express.Router();
 import {Pool} from 'pg'
 
+const repo = new repository()
 const pool = new Pool()
 
 const createUser = (request: any, response: any) => {
@@ -33,6 +35,12 @@ const updateUser = (request: any, response: any) => {
 router.get('/', (req, res) => {
     res.send('Hello pippo');
 });
+
+router.get('/test', (req: Request, res: Response) => {
+    repo.test().then((result) => {
+        res.send(result)
+    })
+} )
 
 router.post('/creaUtente/', createUser);
 

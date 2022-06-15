@@ -1,12 +1,14 @@
 import { SignProcess } from "./signProcessDAO"
+import { sequelize } from "../../connection"
+import { DataTypes } from "sequelize/types"
+import { Document } from "./documentDAO"
 
-const { DataTypes } = require('sequelize')
-const sequelize = require('./database/connection.ts')
+const seq = sequelize
 
-export const User = sequelize.define("User",{
-    codice_fiscale:{
+export const User = seq.define("User",{
+    codice_fiscale: {
         type: DataTypes.CHAR(16),
-        primarykey: true
+        primaryKey: true
     },
     email_address:{
         type: DataTypes.STRING(50),

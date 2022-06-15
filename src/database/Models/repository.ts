@@ -3,7 +3,7 @@ import { User } from "./DAOs/userDAO";
 import { Document } from "./DAOs/documentDAO";
 import { SignProcess } from "./DAOs/signProcessDAO";
 import { sequelize } from "../connection"
-import { Transaction } from "sequelize/types";
+import { Model } from "sequelize/types";
 
 // TODO: gestire eventuali errori
 /** 
@@ -24,7 +24,7 @@ export class repository implements IRepository {
             },
             include: [SignProcess]
         })
-        return document.stato_firma
+        return (document!==null) ? document.stato_firma
 
     }
 
@@ -38,17 +38,17 @@ export class repository implements IRepository {
     }
 
     async cancelSignProcess(document_id: number) {
-        await sequelize.transaction(async (t: Transaction)=>{
+        await sequelize.transaction(async (t: any)=>{
             await Document.destroy({
                 where: {
                     id: document_id
                 }
-            }, {transaction: t}),
+            }),{transaction: t}
             await SignProcess.destroy({
                 where: {
                     id_documento: document_id
                 }
-            }, {transaction: t})
+            }),{transaction: t}
         })
     }
 
@@ -140,7 +140,9 @@ export class repository implements IRepository {
 
     }
     async test() {
-        return await User.findAll()
+        return await User.findAll({
+            include: [{SignProcess}]
+        })
     }
 }
 
