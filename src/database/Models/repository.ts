@@ -1,9 +1,8 @@
-import { IRepository } from "./reposotoryInterface";
+import { IRepository } from "./repositoryInterface";
 import { User } from "./DAOs/userDAO";
 import { Document } from "./DAOs/documentDAO";
 import { SignProcess } from "./DAOs/signProcessDAO";
 import { sequelize } from "../connection"
-import { Model } from "sequelize/types";
 
 // TODO: gestire eventuali errori
 /** 
@@ -24,8 +23,7 @@ export class repository implements IRepository {
             },
             include: [SignProcess]
         })
-        return (document!==null) ? document.stato_firma
-
+        return (document!==null) ? document.stato_firma 
     }
 
     async consumeToken(codice_fiscale: string, token_number: number){
@@ -52,7 +50,7 @@ export class repository implements IRepository {
         })
     }
 
-    async makeMultipleSign(document_URI: string, document_name: string, numero_firmatari: string, codice_fiscale_richiedente: string, ...codici_fiscali_firmatari: string[]) {
+    async makeMultipleSign(document_URI: string, document_name: string, numero_firmatari: number, codice_fiscale_richiedente: string, ...codici_fiscali_firmatari: string[]) {
         var signList: object[]
         Document.create({
             uri_non_firmato: document_URI,

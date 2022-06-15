@@ -7,7 +7,7 @@ export interface IRepository {
     //annulla il processo di firma di un determinato documento
     cancelSignProcess(document_id: number): void 
     //inizia il processo di firma multipla e inserisce il documento associato a questo processo
-    makeMultipleSign(document_URI: string, document_name: string, numero_firmatari: string, codice_fiscale_richiedente: string,  ...codici_fiscali_firmatari: string[]): any
+    makeMultipleSign(document_URI: string, document_name: string, numero_firmatari: number, codice_fiscale_richiedente: string,  ...codici_fiscali_firmatari: string[]): any
     //recupera la stringa di challenging in base ai numeri forniti
     getChallengingString(codice_fiscale: string, challengingNumbers: number[]): Promise<string[]>
     //ricarica i token di un determinato utente con una certa mail e restituisce il numero di token 

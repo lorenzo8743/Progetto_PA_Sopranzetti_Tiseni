@@ -2,10 +2,23 @@ import { SignProcess } from "./signProcessDAO"
 import { User } from "./userDAO"
 import { DataTypes } from "sequelize";
 import { sequelize } from "../../connection"
+import { Model, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 
-const seq = sequelize
+export class Document extends Model<InferAttributes<Document>, InferCreationAttributes<Document>> {
+    declare id: CreationOptional<number>;
+    declare codice_fiscale_richiedente: string;
+    declare uri_firmato: CreationOptional<string>;
+    declare uri_non_firmato: string;
+    declare numero_firmatari: number;
+    declare nome_documento: string;
+    declare stato_firma: boolean;
+} 
 
-export const Document = seq.define('Documenti', {
+Document.init({
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true
+    },
     codice_fiscale_richiedente: {
         type: DataTypes.CHAR(16),
         allowNull: false
@@ -31,6 +44,7 @@ export const Document = seq.define('Documenti', {
         allowNull: false
     }
 },{
+    sequelize,
     tableName: 'Documenti'
 })
 
