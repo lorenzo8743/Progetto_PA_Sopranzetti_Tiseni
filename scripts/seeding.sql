@@ -21,6 +21,8 @@ CREATE TABLE Documenti(
     uri_non_firmato VARCHAR(100) NOT NULL,
     numero_firmatari INT NOT NULL,
     nome_documento VARCHAR(50) NOT NULL, 
+    hash_documento VARCHAR(256) UNIQUE NOT NULL,
+    createdAt TIMESTAMP NOT NULL,
     stato_firma BOOL NOT NULL,
     FOREIGN KEY (codice_fiscale_richiedente) REFERENCES utenti(codice_fiscale)
 );
