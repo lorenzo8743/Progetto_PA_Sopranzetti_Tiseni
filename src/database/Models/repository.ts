@@ -3,7 +3,8 @@ import { User } from "./DAOs/userDAO";
 import { Document } from "./DAOs/documentDAO";
 import { SignProcess } from "./DAOs/signProcessDAO";
 import { sequelize } from "../connection"
-import { Transaction } from "sequelize/types";
+import { ConnectionError, ConnectionTimedOutError, TimeoutError, Transaction } from "sequelize";
+import { Retryable, BackOffPolicy } from "typescript-retry-decorator"
 
 // TODO: gestire eventuali errori
 /** 
@@ -17,6 +18,11 @@ export class repository implements IRepository {
      * @param document_id 
      * @returns Promise<boolean>
      */
+    @Retryable({
+        maxAttempts: 3,
+        backOffPolicy: BackOffPolicy.FixedBackOffPolicy,
+        backOff: 1000,
+    })
     async getSignProcessStatus(document_id: number): Promise<boolean|null>{
         let document = await Document.findOne({
             where: {
@@ -26,6 +32,11 @@ export class repository implements IRepository {
         return (document!==null) ? document.stato_firma : null
     }
 
+    @Retryable({
+        maxAttempts: 3,
+        backOffPolicy: BackOffPolicy.FixedBackOffPolicy,
+        backOff: 1000,
+    })
     async consumeToken(codice_fiscale: string, token_number: number){
         await User.increment({
             numero_token: -token_number
@@ -35,6 +46,11 @@ export class repository implements IRepository {
         })
     }
 
+    @Retryable({
+        maxAttempts: 3,
+        backOffPolicy: BackOffPolicy.FixedBackOffPolicy,
+        backOff: 1000,
+    })
     async cancelSignProcess(document_id: number) {
         await sequelize.transaction(async (t: Transaction)=>{
             await Document.destroy({
@@ -50,6 +66,11 @@ export class repository implements IRepository {
         })
     }
 
+    @Retryable({
+        maxAttempts: 3,
+        backOffPolicy: BackOffPolicy.FixedBackOffPolicy,
+        backOff: 1000,
+    })
     async makeMultipleSign( document_name: string, document_hash: string, numero_firmatari: number, codice_fiscale_richiedente: string, ...codici_fiscali_firmatari: string[]) {
         var signList: object[]
         Document.create({
@@ -76,6 +97,11 @@ export class repository implements IRepository {
         .catch((err: any)=>{})
     }
 
+    @Retryable({
+        maxAttempts: 3,
+        backOffPolicy: BackOffPolicy.FixedBackOffPolicy,
+        backOff: 1000,
+    })
     async getChallengingString(codice_fiscale: string, challengingNumbers: number[]): Promise<string[] | null> {
         let user = await User.findOne({
             attributes: ['challenging_codes'],
@@ -92,6 +118,11 @@ export class repository implements IRepository {
         return null
     }
 
+    @Retryable({
+        maxAttempts: 3,
+        backOffPolicy: BackOffPolicy.FixedBackOffPolicy,
+        backOff: 1000,
+    })
     async refillUserToke(user_email: string, adding_token: number): Promise<number> {
         let user = await User.increment({
             numero_token: adding_token
@@ -102,6 +133,11 @@ export class repository implements IRepository {
         return user.numero_token
     }
 
+    @Retryable({
+        maxAttempts: 3,
+        backOffPolicy: BackOffPolicy.FixedBackOffPolicy,
+        backOff: 1000,
+    })
     async getSignedDocument(document_id: number): Promise<string|null>{
         let document = await Document.findOne({
             where: {
@@ -114,6 +150,11 @@ export class repository implements IRepository {
         return null
     }
 
+    @Retryable({
+        maxAttempts: 3,
+        backOffPolicy: BackOffPolicy.FixedBackOffPolicy,
+        backOff: 1000,
+    })
     async makeSingleSign( document_name: string, document_hash: string,  codice_fiscale_richiedente: string) {
         await Document.create({
             nome_documento: document_name,
@@ -124,6 +165,11 @@ export class repository implements IRepository {
         })
     }
 
+    @Retryable({
+        maxAttempts: 3,
+        backOffPolicy: BackOffPolicy.FixedBackOffPolicy,
+        backOff: 1000,
+    })
     async checkUserPermission(document_id: number, cf_user: string): Promise<boolean> {
         let document = await  Document.findOne({
             where: {
@@ -145,6 +191,12 @@ export class repository implements IRepository {
         return false
 
     }
+    
+    @Retryable({
+        maxAttempts: 3,
+        backOffPolicy: BackOffPolicy.FixedBackOffPolicy,
+        backOff: 1000,
+    })
     async test() {
         return await User.findAll(
             {

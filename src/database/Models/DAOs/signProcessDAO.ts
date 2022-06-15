@@ -1,13 +1,18 @@
 import { sequelize } from "../../connection"
 import { Document } from "./documentDAO"
 import { User } from "./userDAO"
-import { DataTypes } from "sequelize";
+import { Association, DataTypes } from "sequelize";
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 
 export class SignProcess extends Model<InferAttributes<SignProcess>, InferCreationAttributes<SignProcess>> {
     declare codice_fiscale_firmatario: string;
     declare id_documento: number
     declare stato: boolean;
+    
+    public static associations: {
+        signProcesses: Association<SignProcess, User>;
+        user: Association<SignProcess, Document>;
+    }
 } 
 
 SignProcess.init({
@@ -43,5 +48,4 @@ SignProcess.belongsTo(User, {
 SignProcess.belongsTo(Document, {
     foreignKey: 'id_documento',
     targetKey: 'id'
-})
-*/
+})*/

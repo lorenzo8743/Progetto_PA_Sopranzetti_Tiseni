@@ -11,6 +11,11 @@ export class Document extends Model<InferAttributes<Document>, InferCreationAttr
     declare nome_documento: string;
     declare hash_documento: string;
     declare stato_firma: boolean;
+
+    public static associations: {
+        signProcesses: Association<Document, SignProcess>;
+        user: Association<Document, User>;
+    }
 } 
 
 Document.init({
@@ -45,14 +50,12 @@ Document.init({
     createdAt: 'created_at',
     updatedAt: false
 })
-
 /*
 Document.belongsTo(User, {
     foreignKey: "codice_fiscale_richiedente",
     targetKey: "codice_fiscale"
 })
-
+*/
 Document.hasMany(SignProcess,{
     foreignKey: 'id_documento'
 })
-*/
