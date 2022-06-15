@@ -1,6 +1,6 @@
 import { SignProcess } from "./signProcessDAO"
 import { User } from "./userDAO"
-import { DataTypes } from "sequelize";
+import { Association, DataTypes, HasManyAddAssociationMixin, HasManyCountAssociationsMixin, HasManyCreateAssociationMixin, HasManyGetAssociationsMixin, HasManyHasAssociationMixin } from "sequelize";
 import { sequelize } from "../../connection"
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 
@@ -45,9 +45,11 @@ Document.init({
     }
 },{
     sequelize,
-    tableName: 'Documenti'
+    tableName: 'documenti',
+    updatedAt: false
 })
 
+/*
 Document.belongsTo(User, {
     foreignKey: "codice_fiscale_richiedente",
     targetKey: "codice_fiscale"
@@ -56,3 +58,4 @@ Document.belongsTo(User, {
 Document.hasMany(SignProcess,{
     foreignKey: 'id_documento'
 })
+*/

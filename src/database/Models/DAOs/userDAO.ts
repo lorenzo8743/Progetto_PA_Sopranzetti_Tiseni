@@ -1,6 +1,6 @@
 import { SignProcess } from "./signProcessDAO"
 import { sequelize } from "../../connection"
-import { DataTypes } from "sequelize/types"
+import { Association, DataTypes, HasManyAddAssociationMixin, HasManyCountAssociationsMixin, HasManyCreateAssociationMixin, HasManyGetAssociationsMixin, HasManyHasAssociationMixin } from "sequelize"
 import { Document } from "./documentDAO"
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 
@@ -14,11 +14,27 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
     declare locality: string;
     declare organization: string;
     declare organizational_unit: string;
-    declare SN: string;
+    declare sn: string;
     declare challenging_codes: string;
+
+    // Declaring model associations
+    /*
+    public getSignProcess!: HasManyGetAssociationsMixin<SignProcess>; 
+    public addSignProcess!: HasManyAddAssociationMixin<SignProcess, [string, number]>;
+    public hasSignProcess!: HasManyHasAssociationMixin<SignProcess, [string, number]>;
+    public countSignProcess!: HasManyCountAssociationsMixin;
+    public createSignProcess!: HasManyCreateAssociationMixin<SignProcess>;
+    public readonly signProcesses?: SignProcess[];
+    */
+
+    public static associations: {
+        signProcesses: Association<User, SignProcess>;
+        documents: Association<User, Document>;
+    }
 } 
 
 User.init({
+    
         codice_fiscale: {
             type: DataTypes.CHAR(16),
             primaryKey: true
@@ -56,7 +72,7 @@ User.init({
             type: DataTypes.STRING(30),
             allowNull:false 
         },
-        SN:{
+        sn:{
             type: DataTypes.STRING(50),
             allowNull:false 
         },
@@ -67,8 +83,17 @@ User.init({
     },
     {
         sequelize,
-        tableName: 'utenti'
+        tableName: 'utenti',
+        // don't add the timestamp attributes (updatedAt, createdAt)
+        timestamps: false,
+
+        // If don't want createdAt
+        createdAt: false,
+
+        // If don't want updatedAt
+        updatedAt: false,
 })
+
 User.hasMany(SignProcess,{
     foreignKey: 'codice_fiscale_firmatario'
 })

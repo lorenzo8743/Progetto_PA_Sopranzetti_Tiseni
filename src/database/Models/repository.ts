@@ -22,7 +22,6 @@ export class repository implements IRepository {
             where: {
                 id: document_id
             },
-            include: [SignProcess]
         })
         return (document!==null) ? document.stato_firma : null
     }
@@ -147,10 +146,14 @@ export class repository implements IRepository {
 
     }
     async test() {
-        return await User.findAll({
-            include: [{
-                model: SignProcess}]
-        })
+        return await User.findAll(
+            {
+                include:[{
+                    model: SignProcess
+                },{
+                    model: Document
+                }]
+            }
+        );
     }
 }
-
