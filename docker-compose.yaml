@@ -15,9 +15,8 @@ services:
         build:
           context: .
           dockerfile: Dockerfile
-          target: base
         volumes:
-          - ./src:/home/node/app/src
+          - ./src:/home/node/app/src/:ro
           - ./nodemon.json:/home/node/app/nodemon.json
         container_name: applicazione_pa
         expose:

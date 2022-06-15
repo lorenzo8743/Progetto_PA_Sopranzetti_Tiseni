@@ -17,5 +17,5 @@ app.use((req, res, next) => {
 
 app.use('/', router);
 
-app.listen(8080);
-console.log(`Running on http://${"0.0.0.0"}:${8080}`);
+app.listen(config.PORT);
+console.log(`Running on http://${config.HOST}:${config.PORT}`);
