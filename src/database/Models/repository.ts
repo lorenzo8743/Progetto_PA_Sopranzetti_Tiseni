@@ -3,6 +3,7 @@ import { User } from "./DAOs/userDAO";
 import { Document } from "./DAOs/documentDAO";
 import { SignProcess } from "./DAOs/signProcessDAO";
 import { sequelize } from "../connection"
+import { Transaction } from "sequelize/types";
 
 // TODO: gestire eventuali errori
 /** 
@@ -23,7 +24,7 @@ export class repository implements IRepository {
             },
             include: [SignProcess]
         })
-        return (document!==null) ? document.stato_firma 
+        return (document!==null) ? document.stato_firma : null
     }
 
     async consumeToken(codice_fiscale: string, token_number: number){
@@ -36,7 +37,7 @@ export class repository implements IRepository {
     }
 
     async cancelSignProcess(document_id: number) {
-        await sequelize.transaction(async (t: any)=>{
+        await sequelize.transaction(async (t: Transaction)=>{
             await Document.destroy({
                 where: {
                     id: document_id
@@ -66,26 +67,30 @@ export class repository implements IRepository {
                     id_documento: result.id,
                     stato: false
                 } 
-                signList.push(signProcess);
+                SignProcess.create({
+                    codice_fiscale_firmatario: element,
+                    id_documento: result.id,
+                    stato: false
+                })
             });
-            await SignProcess.bulkCreate({
-                signList
-            })
         })
         .catch((err: any)=>{})
     }
 
-    async getChallengingString(codice_fiscale: string, challengingNumbers: number[]): Promise<string[]> {
+    async getChallengingString(codice_fiscale: string, challengingNumbers: number[]): Promise<string[] | null> {
         let user = await User.findOne({
             attributes: ['challenging_codes'],
             where: {
                 codice_fiscale: codice_fiscale
             }
         })
-        let challenginArray = user.challenging_codes.match(/.{3}/g);
-        let challenging_string: string[] = challenginArray[challengingNumbers[0]];
-        challenging_string.push(challenginArray[challengingNumbers[1]])
-        return challenging_string
+        if (user !== null) {
+            let challenginArray = user.challenging_codes.match(/.{3}/g);
+            let challString: string[] = [challenginArray![challengingNumbers[0]], challenginArray![challengingNumbers[1]]];
+            return challString
+        }
+        // TODO: cambiare quando si decide come gestire gli errori
+        return null
     }
 
     async refillUserToke(user_email: string, adding_token: number): Promise<number> {
@@ -104,10 +109,13 @@ export class repository implements IRepository {
                 id: document_id
             }
         })
-        return document.uri_firmato
+        if (document !== null)
+            return document.uri_firmato
+        //TODO: cambiare quando si decide come gestire gli errori
+        return null
     }
 
-    async makeSingleSign(document_URI: string, document_name: string, codice_fiscale_richiedente: number) {
+    async makeSingleSign(document_URI: string, document_name: string, codice_fiscale_richiedente: string) {
         await Document.create({
             uri_non_firmato: document_URI,
             nome_documento: document_name,
@@ -116,6 +124,7 @@ export class repository implements IRepository {
             codice_fiscale_richiedente: codice_fiscale_richiedente
         })
     }
+
     async checkUserPermission(document_id: number, cf_user: string): Promise<boolean> {
         let document = await  Document.findOne({
             where: {
@@ -131,7 +140,7 @@ export class repository implements IRepository {
         if (document === null){
             return false
         }
-        if (cf_user===document.codice_fiscale_richiedente || cf_user===document.include.SignProcess.codice_fiscale_firmatario)
+        if (cf_user===document.codice_fiscale_richiedente /*|| cf_user===document.SignProcess.codice_fiscale_firmatario*/)
             return true
 
         return false
@@ -139,7 +148,8 @@ export class repository implements IRepository {
     }
     async test() {
         return await User.findAll({
-            include: [{SignProcess}]
+            include: [{
+                model: SignProcess}]
         })
     }
 }
