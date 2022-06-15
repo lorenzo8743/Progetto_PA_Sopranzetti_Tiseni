@@ -7,10 +7,9 @@ import { Model, InferAttributes, InferCreationAttributes, CreationOptional } fro
 export class Document extends Model<InferAttributes<Document>, InferCreationAttributes<Document>> {
     declare id: CreationOptional<number>;
     declare codice_fiscale_richiedente: string;
-    declare uri_firmato: CreationOptional<string>;
-    declare uri_non_firmato: string;
     declare numero_firmatari: number;
     declare nome_documento: string;
+    declare hash_documento: string;
     declare stato_firma: boolean;
 } 
 
@@ -23,20 +22,17 @@ Document.init({
         type: DataTypes.CHAR(16),
         allowNull: false
     },
-    uri_firmato: {
-        type: DataTypes.STRING(100),
-        allowNull: true
-    },
-    uri_non_firmato: {
-        type: DataTypes.STRING(100),
-        allowNull: false
-    },
     numero_firmatari: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
     nome_documento: {
         type: DataTypes.STRING(50),
+        allowNull: false
+    },
+    hash_documento: {
+        type: DataTypes.STRING(256),
+        unique: true,
         allowNull: false
     },
     stato_firma: {
