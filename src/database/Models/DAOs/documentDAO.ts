@@ -42,6 +42,7 @@ Document.init({
 },{
     sequelize,
     tableName: 'documenti',
+    createdAt: 'created_at',
     updatedAt: false
 })
 

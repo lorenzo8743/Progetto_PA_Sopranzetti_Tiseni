@@ -14,7 +14,7 @@ CREATE TABLE utenti(
     challenging_codes CHAR(32) NOT NULL
 );
 
-CREATE TABLE Documenti(
+CREATE TABLE documenti(
     id SERIAL PRIMARY KEY,
     codice_fiscale_richiedente CHAR(16) NOT NULL,
     uri_firmato VARCHAR(100),
@@ -22,12 +22,12 @@ CREATE TABLE Documenti(
     numero_firmatari INT NOT NULL,
     nome_documento VARCHAR(50) NOT NULL, 
     hash_documento VARCHAR(256) UNIQUE NOT NULL,
-    createdAt TIMESTAMP NOT NULL,
+    created_at TIMESTAMP NOT NULL,
     stato_firma BOOL NOT NULL,
     FOREIGN KEY (codice_fiscale_richiedente) REFERENCES utenti(codice_fiscale)
 );
 
-CREATE TABLE ProcessiFirma(
+CREATE TABLE processifirma(
     codice_fiscale_firmatario CHAR(16),
     id_documento INT,
     stato BOOL NOT NULL,

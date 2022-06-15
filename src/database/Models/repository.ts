@@ -50,11 +50,11 @@ export class repository implements IRepository {
         })
     }
 
-    async makeMultipleSign(document_URI: string, document_name: string, numero_firmatari: number, codice_fiscale_richiedente: string, ...codici_fiscali_firmatari: string[]) {
+    async makeMultipleSign( document_name: string, document_hash: string, numero_firmatari: number, codice_fiscale_richiedente: string, ...codici_fiscali_firmatari: string[]) {
         var signList: object[]
         Document.create({
-            uri_non_firmato: document_URI,
             nome_documento: document_name,
+            hash_documento: document_hash,
             numero_firmatari: numero_firmatari,
             stato_firma: false,
             codice_fiscale_richiedente: codice_fiscale_richiedente
@@ -109,15 +109,15 @@ export class repository implements IRepository {
             }
         })
         if (document !== null)
-            return document.uri_firmato
+            return null
         //TODO: cambiare quando si decide come gestire gli errori
         return null
     }
 
-    async makeSingleSign(document_URI: string, document_name: string, codice_fiscale_richiedente: string) {
+    async makeSingleSign( document_name: string, document_hash: string,  codice_fiscale_richiedente: string) {
         await Document.create({
-            uri_non_firmato: document_URI,
             nome_documento: document_name,
+            hash_documento: document_hash,
             numero_firmatari: 1,
             stato_firma: false,
             codice_fiscale_richiedente: codice_fiscale_richiedente
